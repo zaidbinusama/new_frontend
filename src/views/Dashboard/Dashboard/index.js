@@ -18,7 +18,7 @@ import {
   GlobeIcon,
   WalletIcon,
 } from "components/Icons/Icons.js";
-import React from "react";
+import React,{ useState, useEffect } from "react";
 import { dashboardTableData, timelineData } from "variables/general";
 import ActiveUsers from "./components/ActiveUsers";
 import BuiltByDevelopers from "./components/BuiltByDevelopers";
@@ -27,9 +27,31 @@ import OrdersOverview from "./components/OrdersOverview";
 import Projects from "./components/Projects";
 import SalesOverview from "./components/SalesOverview";
 import WorkWithTheRockets from "./components/WorkWithTheRockets";
+import axios from 'axios';
+
+
+
+
 
 export default function Dashboard() {
   const iconBoxInside = useColorModeValue("white", "white");
+  const [username, setusername] = useState(null);
+  
+  useEffect(() => {
+    // Make API call to fetch today's users
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/noteyapp/dashboard/");
+        // Assuming the API response has a property named 'username'
+        setusername(response.data[0].username);
+        console.log(response.data[0]);
+      } catch (error) {
+        console.error("Error fetching today's users:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <Flex flexDirection='column' pt={{ base: "120px", md: "75px" }}>
@@ -42,7 +64,7 @@ export default function Dashboard() {
         />
         <MiniStatistics
           title={"Today's Users"}
-          amount={"2,300"}
+          amount={username }
           percentage={5}
           icon={<GlobeIcon h={"24px"} w={"24px"} color={iconBoxInside} />}
         />
